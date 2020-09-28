@@ -18,113 +18,131 @@ public class TextEditor extends JFrame {
     final int WIDTH = 500;
     final int HEIGHT = 500;
 
-    JTextField fileNameTextField;
+    JPanel topPanel;
+    JTextField fileName;
+    JPanel buttonsPanel;
     JButton saveButton;
     JButton loadButton;
+
+    JMenuBar menuBar;
+    JMenu fileMenu;
+
+    JPanel editorPanel;
     JTextArea textArea;
 
     public TextEditor() {
-
         super("Text Editor");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setMinimumSize(new Dimension(300, 300));
         setSize(WIDTH, HEIGHT);
         setLocationRelativeTo(null);
 
-        JPanel topPanel = new JPanel(new BorderLayout());
-        setMargin(topPanel, 15,15, 5, 15);
-        add(topPanel, BorderLayout.NORTH);
+        // Top Panel (file name, buttons) - setup
+        setTopPanel();
 
-        fileNameTextField = setFileName(topPanel);
+        // File name area - setup
+        setFileName();
 
-        JPanel centerPanel = new JPanel(new BorderLayout());
-        add(centerPanel, BorderLayout.CENTER);
-        textArea =  setCenter(centerPanel);
+        // Buttons - setup
+        setButtonsPanel();
+        setSaveButton();
+        setLoadButton();
 
-        JPanel buttonsPanel = new JPanel();
-        topPanel.add(buttonsPanel, BorderLayout.EAST);
-        saveButton = setSaveButton(buttonsPanel);
-        loadButton = setLoadButton(buttonsPanel);
-
-        JMenuBar menuBar = new JMenuBar();
-        setJMenuBar(menuBar);
-
-        JMenu fileMenu = setFileMenu(menuBar);
-        JMenuItem saveItem = setSaveItem(fileMenu);
-        JMenuItem loadItem = setLoadItem(fileMenu);
+        // Menu bar - setup
+        setMenuBar();
+        setFileMenu();
+        setSaveItem();
+        setLoadItem();
         fileMenu.addSeparator();
-        JMenuItem exitItem = setExitItem(fileMenu);
+        setExitItem();
+
+        // Editor Panel - setup
+        setEditorPanel();
 
         setVisible(true);
     }
 
-    private JMenuItem setSaveItem(JMenu fileMenu) {
+    private void setMenuBar() {
+        menuBar = new JMenuBar();
+        setJMenuBar(menuBar);
+    }
 
+    private void setButtonsPanel() {
+        buttonsPanel = new JPanel();
+        topPanel.add(buttonsPanel, BorderLayout.EAST);
+    }
+
+    private void setTopPanel() {
+        topPanel = new JPanel(new BorderLayout());
+        tools.setMargin(topPanel, 15, 15, 5, 15);
+        add(topPanel, BorderLayout.NORTH);
+    }
+
+    private void setEditorPanel() {
+        editorPanel = new JPanel(new BorderLayout());
+        tools.setMargin(editorPanel, 0, 15, 15, 15);
+        add(editorPanel, BorderLayout.CENTER);
+
+        textArea = new JTextArea();
+        textArea.setName("TextArea");
+        tools.setMargin(textArea, 10, 10, 10, 10);
+
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setName("ScrollPane");
+        editorPanel.add(scrollPane);
+
+    }
+
+    private void setSaveItem() {
         JMenuItem saveItem = new JMenuItem("Save");
         saveItem.setName("MenuSave");
         fileMenu.add(saveItem);
         saveItem.addActionListener(this::saveFile);
-
-        return saveItem;
     }
 
-    private JMenuItem setLoadItem(JMenu fileMenu) {
-
+    private void setLoadItem() {
         JMenuItem loadItem = new JMenuItem("Load");
         loadItem.setName("MenuLoad");
         fileMenu.add(loadItem);
         loadItem.addActionListener(this::loadFile);
-
-        return loadItem;
     }
 
-    private JMenuItem setExitItem(JMenu fileMenu) {
+    private void setExitItem() {
         JMenuItem exitItem = new JMenuItem("Exit");
         exitItem.setName("MenuExit");
         fileMenu.add(exitItem);
         exitItem.addActionListener(actionEvent -> {
             dispose();
         });
-
-        return exitItem;
     }
 
-    private JMenu setFileMenu(JMenuBar menuBar) {
-
-        JMenu fileMenu = new JMenu("File");
+    private void setFileMenu() {
+        fileMenu = new JMenu("File");
         fileMenu.setName("MenuFile");
         fileMenu.setMnemonic(KeyEvent.VK_F);
         menuBar.add(fileMenu);
-
-
-        return fileMenu;
     }
 
-    private JTextField setFileName(JPanel topPanel) {
-
+    private void setFileName() {
         JTextField textField = new JTextField();
         textField.setName("FilenameField");
         textField.setMinimumSize(new Dimension(200, 200));
         Font font = textField.getFont().deriveFont(Font.PLAIN, 17);
         textField.setFont(font);
         topPanel.add(textField);
-        return textField;
     }
 
-    private JButton setLoadButton(JPanel buttonsPanel) {
-
-        JButton loadButton = new JButton("Load");
+    private void setLoadButton() {
+        loadButton = new JButton("Load");
         loadButton.setName("LoadButton");
-        loadButton.setBounds(0,0,0,0);
+        loadButton.setBounds(0, 0, 0, 0);
         buttonsPanel.add(loadButton);
 
         loadButton.addActionListener(this::loadFile);
-
-        return loadButton;
     }
 
     private void loadFile(ActionEvent actionEvent) {
-        try (FileReader input = new FileReader(fileNameTextField.getText())) {
+        try (FileReader input = new FileReader(fileName.getText())) {
             textArea.read(input, null);
         } catch (Exception ex) {
             textArea.setText("");
@@ -132,51 +150,20 @@ public class TextEditor extends JFrame {
         }
     }
 
-    private JButton setSaveButton(JPanel buttonsPanel) {
-
-        JButton saveButton = new JButton("Save");
+    private void setSaveButton() {
+        saveButton = new JButton("Save");
         saveButton.setName("SaveButton");
-        saveButton.setBounds(0,0,0,0);
+        saveButton.setBounds(0, 0, 0, 0);
         buttonsPanel.add(saveButton);
 
         saveButton.addActionListener(this::saveFile);
-
-        return saveButton;
     }
 
     private void saveFile(ActionEvent actionEvent) {
-        try (FileWriter writer = new FileWriter(fileNameTextField.getText())) {
+        try (FileWriter writer = new FileWriter(fileName.getText())) {
             textArea.write(writer);
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-
-    private JTextArea setCenter(JPanel centerPanel) {
-
-        setMargin(centerPanel, 0, 15, 15, 15);
-
-        JTextArea textArea = new JTextArea();
-        textArea.setName("TextArea");
-        setMargin(textArea, 10,10, 10, 10);
-
-        JScrollPane scrollPane = new JScrollPane(textArea);
-        scrollPane.setName("ScrollPane");
-        centerPanel.add(scrollPane);
-        add(centerPanel, BorderLayout.CENTER);
-        return textArea;
-    }
-
-
-    public static void setMargin(JComponent aComponent, int aTop,
-                                 int aRight, int aBottom, int aLeft) {
-
-        Border border = aComponent.getBorder();
-
-        Border marginBorder = new EmptyBorder(new Insets(aTop, aLeft,
-                aBottom, aRight));//from   w ww. j  a va2s.  c  o m
-        aComponent.setBorder(border == null ? marginBorder
-                : new CompoundBorder(marginBorder, border));
     }
 }
