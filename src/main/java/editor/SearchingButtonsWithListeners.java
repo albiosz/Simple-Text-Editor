@@ -73,8 +73,6 @@ public class SearchingButtonsWithListeners extends SearchingButtons {
         });
     }
 
-
-    // TODO: 05/12/2020 move that from here
     private void highlightText(JTextArea textArea, int idxStart, int idxEnd) {
         textArea.setCaretPosition(idxStart);
         textArea.select(idxStart, idxEnd);

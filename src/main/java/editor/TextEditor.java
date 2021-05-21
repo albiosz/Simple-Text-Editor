@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.*;
 
+
 public class TextEditor extends JFrame {
 
     public static final String iconsPath = "src/main/resources/icons/";

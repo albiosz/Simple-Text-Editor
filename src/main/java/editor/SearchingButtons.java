@@ -7,8 +7,6 @@ import static editor.TextEditor.iconsPath;
 
 public class SearchingButtons {
 
-
-
     protected JPanel searchButtonsPanel;
     protected JButton searchButton;
     protected JButton backwardButton;
