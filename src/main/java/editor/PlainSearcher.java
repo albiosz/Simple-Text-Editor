@@ -30,6 +30,11 @@ public class PlainSearcher implements Searcher {
     }
 
     @Override
+    public boolean getFound() {
+        return this.found;
+    }
+
+    @Override
     public Searcher searchPattern(String text, String toFind) {
         int idxLastFound = text.indexOf(toFind);
         int idxEnd = idxLastFound + toFind.length();
@@ -43,6 +48,7 @@ public class PlainSearcher implements Searcher {
 
     @Override
     public Searcher searchBackward(String text, String toFind, int idxLastFound) {
+
         int idxTextFound = text.substring(0, idxLastFound).lastIndexOf(toFind);
         int indexLastFound = idxTextFound != -1 ? idxTextFound : idxLastFound;
         int idxEnd = indexLastFound + toFind.length();
@@ -52,6 +58,10 @@ public class PlainSearcher implements Searcher {
 
     @Override
     public Searcher searchForward(String text, String toFind, int idxLastFound) {
+        if(this.idxLastFound == -1) {
+            return searchPattern(text, toFind);
+        }
+
         int idxTextFound = text.indexOf(toFind, idxLastFound + toFind.length());
         int indexLastFound = idxTextFound != -1 ? idxTextFound : idxLastFound;
         int idxEnd = indexLastFound + toFind.length();

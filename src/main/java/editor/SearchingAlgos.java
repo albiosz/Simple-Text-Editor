@@ -10,8 +10,6 @@ public class SearchingAlgos {
 
     private SearchingAlgos(Searcher searcher) {
         this.searcher = searcher;
-//        this.plainSearcher = plainSearcher;
-//        this.regexSearcher = regexSearcher;
     }
 
     public int getIdxLastFound() {
@@ -24,11 +22,12 @@ public class SearchingAlgos {
 
 
     public SearchingAlgos searchPattern(String text, String toFind, boolean regex) {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        TODO: 18/05/2021 uncomment to check parallel processing
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
         Searcher newSearcher;
         if (regex) {
@@ -40,6 +39,10 @@ public class SearchingAlgos {
     }
 
     public SearchingAlgos searchBackward(String text, String toFind, boolean regex) {
+        if (!searcher.getFound()) {
+            return searchPattern(text, toFind, regex);
+        }
+
         Searcher newSearcher;
         if (regex) {
             newSearcher = new RegexSearcher();
@@ -50,10 +53,8 @@ public class SearchingAlgos {
     }
 
     public SearchingAlgos searchForward(String text, String toFind, boolean regex) {
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (!searcher.getFound()) {
+            return searchPattern(text, toFind, regex);
         }
 
         Searcher newSearcher;

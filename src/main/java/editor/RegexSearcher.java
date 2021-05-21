@@ -22,6 +22,21 @@ public class RegexSearcher implements Searcher {
     }
 
     @Override
+    public int getIdxLastFound() {
+        return idxLastFound;
+    }
+
+    @Override
+    public int getIdxEnd() {
+        return idxEnd;
+    }
+
+    @Override
+    public boolean getFound() {
+        return this.found;
+    }
+
+    @Override
     public Searcher searchPattern(String text, String toFind) {
         Pattern pattern = Pattern.compile(toFind);
         Matcher matcher = pattern.matcher(text);
@@ -37,37 +52,38 @@ public class RegexSearcher implements Searcher {
     @Override
     public Searcher searchBackward(String text, String toFind, int idxLastFound) {
         Pattern pattern = Pattern.compile(toFind);
-        Matcher matcher = pattern.matcher(text);
-        if (matcher.find(idxLastFound)) {
+
+        Matcher matcher;
+        try {
+            matcher = pattern.matcher(text).region(0, idxLastFound-1);
+        } catch (IndexOutOfBoundsException ex) {
+            return new RegexSearcher(idxLastFound, idxLastFound + toFind.length(), true);
+        }
+
+        if (matcher.find()) {
             int indexLastFound = matcher.start();
             int indexEnd = matcher.end();
+            while (matcher.find()) {
+                indexLastFound = matcher.start();
+                indexEnd = matcher.end();
+            }
             return new RegexSearcher(indexLastFound, indexEnd, true);
         } else {
-            return new RegexSearcher(this.idxLastFound, this.idxEnd, this.found);
+            return new RegexSearcher(idxLastFound, idxLastFound + toFind.length(), true);
         }
     }
 
     @Override
     public Searcher searchForward(String text, String toFind, int idxLastFound) {
-        Pattern pattern = Pattern.compile(toFind.substring(idxEnd));
+        Pattern pattern = Pattern.compile(toFind);
         Matcher matcher = pattern.matcher(text);
-        if (matcher.find(idxLastFound)) {
-            int indexLastFound = idxEnd + matcher.start();
-            int indexEnd = idxEnd + matcher.end();
+        if (matcher.find(idxLastFound + 1)) {
+            int indexLastFound = matcher.start();
+            int indexEnd = matcher.end();
             return new RegexSearcher(indexLastFound, indexEnd, true);
         } else {
-            return new RegexSearcher(this.idxLastFound, this.idxEnd, this.found);
+            return new RegexSearcher(idxLastFound, idxLastFound + toFind.length(), true);
         }
 
-    }
-
-    @Override
-    public int getIdxLastFound() {
-        return idxLastFound;
-    }
-
-    @Override
-    public int getIdxEnd() {
-        return idxEnd;
     }
 }

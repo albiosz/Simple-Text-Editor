@@ -2,14 +2,16 @@ package editor;
 
 public interface Searcher {
 
-    public Searcher searchPattern(String text, String toFind);
+    Searcher searchPattern(String text, String toFind);
 
-    public Searcher searchBackward(String text, String toFind, int idxLastFind);
+    Searcher searchBackward(String text, String toFind, int idxLastFind);
 
-    public Searcher searchForward(String text, String toFind, int idxLastFind);
+    Searcher searchForward(String text, String toFind, int idxLastFind);
 
-    public int getIdxLastFound();
+    int getIdxLastFound();
 
-    public int getIdxEnd();
+    int getIdxEnd();
+
+    boolean getFound();
 }
 
